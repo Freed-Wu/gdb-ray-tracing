@@ -1,0 +1,71 @@
+#!/usr/bin/env -S gdb -x
+source ray-tracing.gdb
+set $errors = 0
+set $vec0 = {0., 0., 0.}
+set $vec1 = {1., 2., 3.}
+set $vec2 = {-1., -2., -3.}
+vector_scalar_multiply $vec1 65536
+ray_set $vec0 $return
+set $ray = $return
+
+# vector {{{ #
+vector_add $vec1 $vec2
+vector_is_equal $return $vec0
+set $errors += !$return
+
+vector_scalar_multiply $vec1 -1
+vector_is_equal $return $vec2
+set $errors += !$return
+
+vector_dot $vec1 $vec2
+float_is_equal $return -14
+set $errors += !$return
+
+vector_normalize $vec1
+vector_norm $return
+float_is_equal $return 1
+# }}} vector #
+
+# float {{{ #
+float_abs -1.5
+float_is_equal $return 1.5
+set $errors += !$return
+
+float_abs 1.5
+float_is_equal $return 1.5
+set $errors += !$return
+
+float_abs 0
+float_is_equal $return 0
+set $errors += !$return
+
+float_sqrt 0.001
+set $return = $return * $return
+float_is_close $return 0.001
+set $errors += !$return
+# }}} float #
+
+# ray {{{ #
+ray_enviroment $ray
+float_is_equal $return[2] 1
+set $errors += !$return
+# }}} ray #
+
+# sphere {{{ #
+sphere_set $vec2 0.5
+set $sphere = $return
+sphere_ray_intersection $sphere $ray
+set $return = ($return < 0)
+set $errors += !$return
+
+vector_scalar_multiply $vec1 2
+sphere_set $return 1.
+set $sphere = $return
+sphere_ray_intersection $sphere $ray
+set $return = ($return > 0)
+set $errors += !$return
+# }}} sphere #
+
+printf "%d", $errors
+quit $errors
+# ex: foldmethod=marker
