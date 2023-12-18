@@ -1,4 +1,4 @@
-#!/usr/bin/env -S gdb -x
+#!/usr/bin/env -S gdb --batch-silent -x
 source ray-tracing.gdb
 
 # camera parameters
@@ -25,5 +25,4 @@ set logging file output.ppm
 set logging enabled on
 ray_render $width $height $right $up $corner_LB $origin $transmission $depth $reflectance $sphere0 $sphere1 $white $blue
 set logging enabled off
-quit
 # ex: filetype=gdb

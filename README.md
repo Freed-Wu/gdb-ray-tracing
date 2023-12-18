@@ -34,9 +34,9 @@ Use [gdb](https://www.gnu.org/software/gdb/) to render a scene.
 ## Usage
 
 ```sh
-gdb -x main.gdb 2> /dev/null
+gdb --batch-silent -x main.gdb
 # or
-./main.gdb 2> /dev/null
+./main.gdb
 # wait 8m 2s
 xdg-open output.ppm
 ```
