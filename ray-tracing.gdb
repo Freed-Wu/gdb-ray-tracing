@@ -1,116 +1,148 @@
 # vector {{{ #
-# arg0: str
+document vector_print
+  arg0: str
+end
 define vector_print
   set $vector_print_arg0 = $arg0
   eval "printf \"%s: (%%f, %%f, %%f)\n\", %s[0], %s[1], %s[2]", $vector_print_arg0, $vector_print_arg0, $vector_print_arg0, $vector_print_arg0
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: float[3]
+document vector_add
+  arg0: float[3]
+  arg1: float[3]
+  return: float[3]
+end
 define vector_add
   set $return = {$arg0[0] + $arg1[0], $arg0[1] + $arg1[1], $arg0[2] + $arg1[2]}
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: float[3]
+document vector_minus
+  arg0: float[3]
+  arg1: float[3]
+  return: float[3]
+end
 define vector_minus
   set $return = {$arg0[0] - $arg1[0], $arg0[1] - $arg1[1], $arg0[2] - $arg1[2]}
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: float[3]
+document vector_multiply
+  arg0: float[3]
+  arg1: float[3]
+  return: float[3]
+end
 define vector_multiply
   set $return = {$arg0[0] * $arg1[0], $arg0[1] * $arg1[1], $arg0[2] * $arg1[2]}
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: float[3]
+document vector_divide
+  arg0: float[3]
+  arg1: float[3]
+  return: float[3]
+end
 define vector_divide
   set $return = {$arg0[0] / $arg1[0], $arg0[1] / $arg1[1], $arg0[2] / $arg1[2]}
 end
 
-# arg0: float[3]
-# arg1: float
-# return: float[3]
+document vector_scalar_multiply
+  arg0: float[3]
+  arg1: float
+  return: float[3]
+end
 define vector_scalar_multiply
   set $return = {$arg0[0] * $arg1, $arg0[1] * $arg1, $arg0[2] * $arg1}
 end
 
-# arg0: float[3]
-# arg1: float
-# return: float[3]
+document vector_scalar_divide
+  arg0: float[3]
+  arg1: float
+  return: float[3]
+end
 define vector_scalar_divide
   set $return = {$arg0[0] / $arg1, $arg0[1] / $arg1, $arg0[2] / $arg1}
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: float
+document vector_dot
+  arg0: float[3]
+  arg1: float[3]
+  return: float
+end
 define vector_dot
   set $return = $arg0[0] * $arg1[0] + $arg0[1] * $arg1[1] + $arg0[2] * $arg1[2]
 end
 
-# arg0: float[3]
-# return: float
+document vector_square
+  arg0: float[3]
+  return: float
+end
 define vector_square
   vector_dot $arg0 $arg0
 end
 
-# arg0: float[3]
-# return: int
+document vector_is_equal_0
+  arg0: float[3]
+  return: int
+end
 define vector_is_equal_0
   vector_square $arg0
   set $return = !$return
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: int
+document vector_is_equal
+  arg0: float[3]
+  arg1: float[3]
+  return: int
+end
 define vector_is_equal
   vector_minus $arg0 $arg1
   vector_square $return
   set $return = !$return
 end
 
-# arg0: float[3]
-# arg1: float[3]
-# return: int
+document vector_is_not_equal
+  arg0: float[3]
+  arg1: float[3]
+  return: int
+end
 define vector_is_not_equal
   vector_is_equal $arg0 $arg1
   set $return = !$return
 end
 
-# arg0: float[3]
-# return: float
+document vector_norm
+  arg0: float[3]
+  return: float
+end
 define vector_norm
   vector_square $arg0
   float_sqrt $return
 end
 
-# arg0: float[3]
-# return: float[3]
+document vector_normalize
+  arg0: float[3]
+  return: float[3]
+end
 define vector_normalize
   set $vector_normalize_vector = $arg0
   vector_norm $vector_normalize_vector
   vector_scalar_divide $vector_normalize_vector $return
 end
 
-# arg0: float[3]
-# arg1: float: distance
-# return: float[3]
+document vector_scale
+  arg0: float[3]
+  arg1: float: distance
+  return: float[3]
+end
 define vector_scale
   set $ray_at_length = $arg1
   vector_normalize $arg0
   vector_scalar_multiply $return $ray_at_length
 end
 
-# arg0: float[3]: input vector
-# arg1: float[3]: normal vector
-# return: float[3]: reflected vector
+document vector_reflect
+  arg0: float[3]: input vector
+  arg1: float[3]: normal vector
+  return: float[3]: reflected vector
+end
 define vector_reflect
   set $vector_reflect_input = $arg0
   set $vector_reflect_normal = $arg1
@@ -122,14 +154,18 @@ end
 # }}} vector #
 
 # float {{{ #
-# arg0: str
+document float_print
+  arg0: str
+end
 define float_print
   set $float_print_arg0 = $arg0
   eval "printf \"%s: %%f\n\", %s", $float_print_arg0, $float_print_arg0
 end
 
-# arg0: float
-# return: float
+document float_abs
+  arg0: float
+  return: float
+end
 define float_abs
   set $return = $arg0
   if $return < 0
@@ -137,13 +173,16 @@ define float_abs
   end
 end
 
-# arg0: float
-# arg1: float: bias max, default 0.01
-# return: float
-#   x = sqrt(a)
-#   f(x) = x^2 - a = 0
-#   x_n = x_{n - 1} - f(x_{n - 1}) / f'(x_{n - 1})
-#   x_n = (x_{n - 1} + a / x_{n - 1}) / 2
+document float_sqrt
+  arg0: float
+  arg1: float: bias max, default 0.01
+  return: float
+
+  x = sqrt(a)
+  f(x) = x^2 - a = 0
+  x_n = x_{n - 1} - f(x_{n - 1}) / f'(x_{n - 1})
+  x_n = (x_{n - 1} + a / x_{n - 1}) / 2
+end
 define float_sqrt
   set $float_sqrt_a = $arg0
   if $argc < 2
@@ -161,51 +200,65 @@ define float_sqrt
   set $return = $float_sqrt_root
 end
 
-# arg0: float
-# return: float
+document float_is_equal_0
+  arg0: float
+  return: float
+end
 define float_is_equal_0
   set $return = $arg0 == 0
 end
 
-# arg0: float
-# arg1: float
-# return: float
+document float_is_equal
+  arg0: float
+  arg1: float
+  return: float
+end
 define float_is_equal
   set $return = $arg0 == $arg1
 end
 
-# arg0: float
-# arg1: float
-# return: float
+document float_is_less
+  arg0: float
+  arg1: float
+  return: float
+end
 define float_is_less
   set $return = $arg0 < $arg1
 end
 
-# arg0: float
-# arg1: float
-# return: float
+document float_is_less_equal
+  arg0: float
+  arg1: float
+  return: float
+end
 define float_is_less_equal
   set $return = $arg0 <= $arg1
 end
 
-# arg0: float
-# arg1: float
-# return: float
+document float_is_greater
+  arg0: float
+  arg1: float
+  return: float
+end
 define float_is_greater
   set $return = $arg0 > $arg1
 end
 
-# arg0: float
-# arg1: float
-# return: float
+document float_is_greater_equal
+  arg0: float
+  arg1: float
+  return: float
+end
 define float_is_greater_equal
   set $return = $arg0 >= $arg1
 end
 
-# arg0: float
-# arg1: float
-# arg2: float: eps
-# return: float
+document float_is_close
+  arg0: float
+  arg1: float
+  arg2: float: eps
+  return: float
+end
 define float_is_close
   if $argc < 3
     set $float_is_close_eps = 0.01
@@ -217,44 +270,56 @@ define float_is_close
   set $return = $return < $float_is_close_eps
 end
 
-# arg0: float
-# arg1: float
-# return: float
+document float_is_not_equal
+  arg0: float
+  arg1: float
+  return: float
+end
 define float_is_not_equal
   set $return = $arg0 != $arg1
 end
 # }}} float #
 
 # ray {{{ #
-# arg0: str
+document ray_print
+  arg0: str
+end
 define ray_print
   set $ray_print_arg0 = $arg0
   eval "printf \"%s: (%%f, %%f, %%f) -> (%%f, %%f, %%f)\n\", %s[0], %s[1], %s[2], %s[3], %s[4], %s[5]", $ray_print_arg0, $ray_print_arg0, $ray_print_arg0, $ray_print_arg0, $ray_print_arg0, $ray_print_arg0, $ray_print_arg0
 end
 
-# arg0: float[3]: origin
-# arg1: float[3]: direction vector, the length is transmission
-# return: ray
+document ray_set
+  arg0: float[3]: origin
+  arg1: float[3]: direction vector, the length is transmission
+  return: ray
+end
 define ray_set
   set $return = {$arg0[0], $arg0[1], $arg0[2], $arg1[0], $arg1[1], $arg1[2]}
 end
 
-# arg0: ray
-# return: float[3]: origin
+document ray_get_origin
+  arg0: ray
+  return: float[3]: origin
+end
 define ray_get_origin
   set $return = {$arg0[0], $arg0[1], $arg0[2]}
 end
 
-# arg0: ray
-# return: float[3]: direction vector
+document ray_get_direction
+  arg0: ray
+  return: float[3]: direction vector
+end
 define ray_get_direction
   set $return = {$arg0[3], $arg0[4], $arg0[5]}
 end
 
-# arg0: ray
-# arg1: rgb: default: white
-# arg2: rgb: default: blue
-# return: rgb
+document ray_enviroment
+  arg0: ray
+  arg1: rgb: default: white
+  arg2: rgb: default: blue
+  return: rgb
+end
 define ray_enviroment
   set $ray_enviroment_white = {1., 1., 1.}
   set $ray_enviroment_blue = {.5, .8, 1.}
@@ -276,9 +341,11 @@ define ray_enviroment
   vector_add $ray_enviroment_white $ray_enviroment_blue
 end
 
-# arg0: ray
-# arg1: float: distance
-# return: float[3]: arrival position
+document ray_at
+  arg0: ray
+  arg1: float: distance
+  return: float[3]: arrival position
+end
 define ray_at
   ray_get_origin $arg0
   set $ray_at_origin = $return
@@ -287,16 +354,18 @@ define ray_at
   vector_add $return $ray_at_origin
 end
 
-# arg0: int: i
-# arg1: int: j
-# arg2: int: width
-# arg3: int: height
-# arg4: float[3]: right
-# arg5: float[3]: up
-# arg6: float[3]: LB corner
-# arg7: float[3]: origin
-# arg8: float: transmission
-# return: ray
+document ray_generate
+  arg0: int: i
+  arg1: int: j
+  arg2: int: width
+  arg3: int: height
+  arg4: float[3]: right
+  arg5: float[3]: up
+  arg6: float[3]: LB corner
+  arg7: float[3]: origin
+  arg8: float: transmission
+  return: ray
+end
 define ray_generate
   set $ray_generate_u = (double) $arg0 / $arg2
   set $ray_generate_v = 1. - (double) $arg1 / $arg3
@@ -311,14 +380,16 @@ define ray_generate
   ray_set $arg7 $return
 end
 
-# arg0: ray
-# arg1: int: depth
-# arg2: float[3]: reflectance
-# arg3: sphere
-# arg4: sphere
-# arg5: rgb: default: white
-# arg6: rgb: default: blue
-# return: rgb
+document ray_trace
+  arg0: ray
+  arg1: int: depth
+  arg2: float[3]: reflectance
+  arg3: sphere
+  arg4: sphere
+  arg5: rgb: default: white
+  arg6: rgb: default: blue
+  return: rgb
+end
 define ray_trace
   set $ray_trace_ray = $arg0
   set $ray_trace_depth = $arg1
@@ -360,19 +431,21 @@ define ray_trace
   set $return = $ray_trace_color
 end
 
-# arg0: int: width
-# arg1: int: height
-# arg2: float[3]: right
-# arg3: float[3]: up
-# arg4: float[3]: LB corner
-# arg5: float[3]: origin
-# arg6: float: transmission
-# arg7: int: depth
-# arg8: float[3]: reflectance
-# arg9: sphere
-# arg10: sphere
-# arg11: rgb: default: white
-# arg12: rgb: default: blue
+document ray_render
+  arg0: int: width
+  arg1: int: height
+  arg2: float[3]: right
+  arg3: float[3]: up
+  arg4: float[3]: LB corner
+  arg5: float[3]: origin
+  arg6: float: transmission
+  arg7: int: depth
+  arg8: float[3]: reflectance
+  arg9: sphere
+  arg10: sphere
+  arg11: rgb: default: white
+  arg12: rgb: default: blue
+end
 define ray_render
   set $ray_render_width = $arg0
   set $ray_render_height = $arg1
@@ -404,36 +477,45 @@ end
 # }}} ray #
 
 # sphere {{{ #
-# arg0: float[3]: center
-# arg1: float: radius
-# return: sphere
+document sphere_set
+  arg0: float[3]: center
+  arg1: float: radius
+  return: sphere
+end
 define sphere_set
   set $return = {$arg0[0], $arg0[1], $arg0[2], $arg1}
 end
 
-# arg0: sphere
-# return: float[3]: center
+document sphere_get_center
+  arg0: sphere
+  return: float[3]: center
+end
 define sphere_get_center
   set $return = {$arg0[0], $arg0[1], $arg0[2]}
 end
 
-# arg0: sphere
-# return: float[3]: radius
+document sphere_get_radius
+  arg0: sphere
+  return: float[3]: radius
+end
 define sphere_get_radius
   set $return = $arg0[3]
 end
 
-# arg0: sphere
-# arg1: ray
-# return: float[3]: nearer intersection, if return -1, no physical solution
-#   |p - c|^2 = r^2
-#   p - o // d => p = kd + o
-#   =>
-#   |kd + o - c|^2 = r^2
-#   |d|^2 k^2 + 2d . (o - c) k + |o - c|^2 - r^2 = 0
-#   |d|^2 / 2 k^2 + d . (o - c) k + (|o - c|^2 - r^2) / 2 = 0
-#   delta = (d . (c - o))^2 - |d|^2 (|c - o|^2 - r^2)
-#   k = (d . (c - o) - sqrt(delta)) / |d|^2
+document sphere_ray_intersection
+  arg0: sphere
+  arg1: ray
+  return: float[3]: nearer intersection, if return -1, no physical solution
+
+  |p - c|^2 = r^2
+  p - o // d => p = kd + o
+  =>
+  |kd + o - c|^2 = r^2
+  |d|^2 k^2 + 2d . (o - c) k + |o - c|^2 - r^2 = 0
+  |d|^2 / 2 k^2 + d . (o - c) k + (|o - c|^2 - r^2) / 2 = 0
+  delta = (d . (c - o))^2 - |d|^2 (|c - o|^2 - r^2)
+  k = (d . (c - o) - sqrt(delta)) / |d|^2
+end
 define sphere_ray_intersection
   set $sphere_ray_intersection_ray = $arg1
   sphere_get_center $arg0
@@ -471,10 +553,12 @@ define sphere_ray_intersection
   end
 end
 
-# arg0: sphere
-# arg1: ray
-# arg2: float: distance
-# return: ray
+document sphere_ray_reflect
+  arg0: sphere
+  arg1: ray
+  arg2: float: distance
+  return: ray
+end
 define sphere_ray_reflect
   set $sphere_ray_reflect_sphere = $arg0
   set $sphere_ray_reflect_ray = $arg1
