@@ -54,8 +54,17 @@ ray_render ...
 
 ### Computer Graphics
 
-- [CMake ray tracing](https://zhuanlan.zhihu.com/p/123419161)
-- [latex-rendering](https://github.com/xziyue/latex-rendering)
+#### Ray Trace
+
+- [typescript](https://github.com/Microsoft/TypeScriptSamples/tree/master/raytracer)
+- [c++ template](https://github.com/tcbrindle/raytracer.hpp)
+- [cmake](https://github.com/64/cmake-raytracer)
+- another [cmake](https://zhuanlan.zhihu.com/p/123419161)
+- [meson](https://github.com/annacrombie/meson-raytracer)
+
+#### Render
+
+- [latex](https://github.com/xziyue/latex-rendering)
 
 ### gdb
 
